@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Credit Card Fraud Detection</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f0e3; /* Light beige background */
+            padding-top: 50px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .form-container {
+            max-width: 900px; /* Adjust width as needed */
+            margin: auto;
+            background-color: #fff8f0; /* Slightly off-white container */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex; /* Use flexbox to arrange content side-by-side */
+            gap: 30px; /* Space between the prediction form and the "Get Your Copy" section */
+        }
+        .prediction-form {
+            flex: 2; /* Take up more space for the prediction form */
+        }
+        .get-copy-section {
+            flex: 1; /* Take up less space for the "Get Your Copy" section */
+            background-color: #f9f9f9; /* Light gray background for this section */
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .get-copy-section h3 {
+            font-size: 1.8em;
+            color: #54453d; /* Warm brown heading */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group label {
+            display: block; /* Make labels appear above the input */
+            font-weight: bold;
+            color: #54453d;
+            margin-bottom: 5px;
+        }
+        .form-control {
+            width: 100%; /* Make input fields take full width of their container */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .btn-primary {
+            background-color: #d65d4d; /* A warmer red/orange */
+            border-color: #d65d4d;
+            font-size: 1.1em;
+            padding: 10px 20px;
+            width: 100%; /* Make the button full width */
+        }
+        .btn-primary:hover {
+            background-color: #b84a3b;
+            border-color: #b84a3b;
+        }
+        .prediction-title {
+            margin-top: 30px;
+            font-weight: bold;
+            color: #54453d;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        .alert-success {
+            background-color: #e6f9e8;
+            color: #38761d;
+            border-color: #c9e5c2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+        .alert-danger {
+            background-color: #ffe6e6;
+            color: #c0392b;
+            border-color: #e74c3c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="prediction-form">
+            <h2 class="mb-4 text-center">Credit Card Fraud Detection</h2>
+            <form method="POST" class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Time">Time</label>
+                        <input type="number" step="any" name="Time" class="form-control" placeholder="Enter Time" required>
+                    </div>
+                    {% for i in range(1, 15) %}
+                    <div class="form-group">
+                        <label for="V{{ i }}">V{{ i }}</label>
+                        <input type="number" step="any" name="V{{ i }}" class="form-control" placeholder="Enter V{{ i }}" required>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {% for i in range(15, 29) %}
+                    <div class="form-group">
+                        <label for="V{{ i }}">V{{ i }}</label>
+                        <input type="number" step="any" name="V{{ i }}" class="form-control" placeholder="Enter V{{ i }}" required>
+                    </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <label for="Amount">Amount</label>
+                        <input type="number" step="any" name="Amount" class="form-control" placeholder="Enter Amount" required>
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Detect Fraud</button>
+                </div>
+            </form>
+
+            {% if prediction %}
+            <div class="prediction-title text-center mt-5">Prediction:</div>
+            <div class="alert {% if 'Error' in prediction %}alert-danger{% elif prediction == 'Fraudulent' %}alert-danger{% else %}alert-success{% endif %} text-center mt-2">
+                <strong>{{ prediction }}</strong>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="get-copy-section">
+            <h3>Get Your Copy</h3>
+            <form>
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                </div>
+                <div class="form-group">
+                    <label for="companyEmail">Company Email</label>
+                    <input type="email" class="form-control" id="companyEmail" placeholder="Company Email">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" class="form-control" id="company" placeholder="Company">
+                </div>
+                <div class="form-group">
+                    <label for="jobTitle">Job Title</label>
+                    <input type="text" class="form-control" id="jobTitle" placeholder="Job Title">
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select class="form-control" id="country">
+                        <option>Select Country</option>
+                        <option>United States</option>
+                        <option>Canada</option>
+                        <option>United Kingdom</option>
+                        </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Download Report</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

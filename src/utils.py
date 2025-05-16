@@ -22,32 +22,26 @@ def save_object(file_path, obj):
         raise CustomException(e, sys)
 
 
-def evaluate_models(X_train, y_train, X_test, y_test, models, param):
+def evaluate_models(X_train, y_train, X_test, y_test, models, param: dict):
     try:
         report = {}
+        trained_models = {}
 
-        for i in range(len(models)):
-            model_name = list(models.keys())[i]
-            model = list(models.values())[i]
+        for model_name, model in models.items():
             para = param.get(model_name, {})
 
-            gs = GridSearchCV(model, para, cv=3, scoring='f1', n_jobs=-1)
+            gs = GridSearchCV(model, para, cv=5, verbose=2, scoring='f1', n_jobs=-1)
             gs.fit(X_train, y_train)
 
             best_model = gs.best_estimator_
+            trained_models[model_name] = best_model
 
-            y_train_pred = best_model.predict(X_train)
             y_test_pred = best_model.predict(X_test)
-
-            # You can change the metric depending on what's most important
             test_f1 = f1_score(y_test, y_test_pred)
-            # Alternatively:
-            # test_accuracy = accuracy_score(y_test, y_test_pred)
-            # test_roc_auc = roc_auc_score(y_test, best_model.predict_proba(X_test)[:, 1])
 
             report[model_name] = test_f1
 
-        return report
+        return report, trained_models
 
     except Exception as e:
         raise CustomException(e, sys)
